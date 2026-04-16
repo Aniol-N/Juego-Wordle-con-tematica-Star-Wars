@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Star Wars Wordle</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <h1>Star Wars Wordle</h1>
+      <p>Listado de personajes.</p>
+    </header>
+
+    <section class="toolbar">
+      <p id="status">Cargando personajes...</p>
+    </section>
+
+    <section>
+      <div id="characters-list" class="cards" aria-live="polite"></div>
+    </section>
+
+    <section class="pagination-wrap">
+      <h2>Paginas</h2>
+      <div id="pagination" class="pagination" aria-label="Paginacion de personajes"></div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

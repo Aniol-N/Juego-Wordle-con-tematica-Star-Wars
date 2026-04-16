@@ -1,0 +1,128 @@
+:root {
+  --bg: #0b0f1a;
+  --panel: #141c2f;
+  --panel-2: #1e2942;
+  --text: #eff2ff;
+  --muted: #b7c0d9;
+  --accent: #f7d354;
+  --danger: #f25c54;
+  --ok: #4ecdc4;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #22335d 0%, rgba(34, 51, 93, 0) 60%),
+    radial-gradient(1000px 500px at 95% 0%, #2a2d58 0%, rgba(42, 45, 88, 0) 55%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 2rem 1rem 3rem;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(1.4rem, 3.5vw, 2.1rem);
+  color: var(--accent);
+}
+
+.hero p {
+  color: var(--muted);
+}
+
+.toolbar {
+  margin: 1rem 0 1.4rem;
+  padding: 0.8rem 1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  padding: 1rem;
+  border-radius: 14px;
+  background: linear-gradient(180deg, var(--panel), var(--panel-2));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 0.8rem;
+}
+
+.meta {
+  margin: 0.35rem 0;
+  color: var(--muted);
+}
+
+.meta strong {
+  color: var(--text);
+}
+
+.actions {
+  margin-top: 0.9rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+button {
+  border: none;
+  border-radius: 8px;
+  padding: 0.62rem 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--accent);
+  color: #1b1f2c;
+}
+
+button:hover {
+  filter: brightness(1.05);
+}
+
+input[type="file"] {
+  width: 100%;
+  color: var(--text);
+}
+
+.pagination-wrap {
+  margin-top: 1.5rem;
+}
+
+.pagination {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.page-btn {
+  min-width: 2.3rem;
+  background: #344264;
+  color: white;
+}
+
+.page-btn.active {
+  background: var(--ok);
+  color: #092120;
+}
+
+.error {
+  color: var(--danger);
+  font-weight: 600;
+}

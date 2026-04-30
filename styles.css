@@ -126,3 +126,77 @@ input[type="file"] {
   color: var(--danger);
   font-weight: 600;
 }
+
+.game-wrap {
+  margin-top: 2rem;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.game-controls {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.autocomplete {
+  display: grid;
+  gap: 0.5rem;
+}
+
+#guess-input {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: #0f1627;
+  color: var(--text);
+}
+
+.suggestions {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.suggestion {
+  padding: 0.4rem 0.55rem;
+  border-radius: 6px;
+  background: #243353;
+  cursor: pointer;
+}
+
+.suggestion:hover {
+  background: #2c3f66;
+}
+
+#check-result {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.check-verde,
+.check-rojo,
+.check-desconocido {
+  padding: 0.38rem 0.55rem;
+  border-radius: 7px;
+  font-weight: 600;
+}
+
+.check-verde {
+  background: rgba(78, 205, 196, 0.2);
+  border: 1px solid rgba(78, 205, 196, 0.65);
+  color: #b9fffb;
+}
+
+.check-rojo {
+  background: rgba(242, 92, 84, 0.2);
+  border: 1px solid rgba(242, 92, 84, 0.65);
+  color: #ffd0cc;
+}
+
+.check-desconocido {
+  background: rgba(183, 192, 217, 0.15);
+  border: 1px solid rgba(183, 192, 217, 0.45);
+  color: #d9def0;
+}

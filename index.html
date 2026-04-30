@@ -25,6 +25,19 @@
       <h2>Paginas</h2>
       <div id="pagination" class="pagination" aria-label="Paginacion de personajes"></div>
     </section>
+
+    <section class="game-wrap">
+      <h2>Starwardle (Juego)</h2>
+      <div class="game-controls">
+        <button id="start-game">Start</button>
+        <div class="autocomplete">
+          <input id="guess-input" type="text" placeholder="Escribe un nombre..." autocomplete="off" />
+          <div id="suggestions" class="suggestions"></div>
+          <button id="check-btn">Comprobar</button>
+        </div>
+        <div id="check-result"></div>
+      </div>
+    </section>
   </main>
 
   <script src="app.js"></script>

@@ -13,6 +13,10 @@
         statusText.className = isError ? "error" : "";
     }
 
+    function getCharacterField(character, snakeCaseKey, camelCaseKey) {
+        return character[snakeCaseKey] || character[camelCaseKey] || "desconocido";
+    }
+
     function transferCharacter(character, fileInput, buttonElement) {
         let selectedFile = fileInput.files[0] || null;
 
@@ -26,8 +30,8 @@
         formData.append("height", character.height);
         formData.append("mass", character.mass);
         formData.append("hair_color", character.hair_color);
-        formData.append("eye_color", character.eye_color || "unknown");
-        formData.append("birth_year", character.birth_year || "unknown");
+        formData.append("eye_color", getCharacterField(character, "eye_color", "eyeColor"));
+        formData.append("birth_year", getCharacterField(character, "birth_year", "birthYear"));
         formData.append("skin_color", character.skin_color);
         formData.append("gender", character.gender);
         formData.append("photo", selectedFile);
@@ -184,8 +188,8 @@
         characters.forEach(function (character) {
             let card = document.createElement("article");
             card.className = "card";
-            let eyeColor = character.eye_color || "desconocido";
-            let birthYear = character.birth_year || "desconocido";
+            let eyeColor = getCharacterField(character, "eye_color", "eyeColor");
+            let birthYear = getCharacterField(character, "birth_year", "birthYear");
 
             card.innerHTML =
                 "<h3>" + character.name + "</h3>" +

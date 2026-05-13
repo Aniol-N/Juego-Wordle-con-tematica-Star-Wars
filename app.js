@@ -6,6 +6,7 @@
     let charactersList = document.getElementById("characters-list");
     let pagination = document.getElementById("pagination");
     let statusText = document.getElementById("status");
+    let resetListBtn = document.getElementById("reset-list");
     let currentPage = 1;
 
     function setStatus(message, isError) {
@@ -89,6 +90,10 @@
         };
 
         xhr.send();
+    }
+
+    function resetCharacterList() {
+        getPeople(1);
     }
 
     // --- Juego: start, autocomplete, check ---
@@ -181,6 +186,7 @@
 
     startBtn && startBtn.addEventListener("click", startGame);
     checkBtn && checkBtn.addEventListener("click", checkGuess);
+    resetListBtn && resetListBtn.addEventListener("click", resetCharacterList);
 
     function renderCharacters(characters) {
         charactersList.innerHTML = "";

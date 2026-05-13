@@ -27,6 +27,7 @@
         formData.append("mass", character.mass);
         formData.append("hair_color", character.hair_color);
         formData.append("eye_color", character.eye_color || "unknown");
+        formData.append("birth_year", character.birth_year || "unknown");
         formData.append("skin_color", character.skin_color);
         formData.append("gender", character.gender);
         formData.append("photo", selectedFile);
@@ -183,12 +184,16 @@
         characters.forEach(function (character) {
             let card = document.createElement("article");
             card.className = "card";
+            let eyeColor = character.eye_color || "desconocido";
+            let birthYear = character.birth_year || "desconocido";
 
             card.innerHTML =
                 "<h3>" + character.name + "</h3>" +
                 "<p class='meta'><strong>Altura:</strong> " + character.height + " cm</p>" +
                 "<p class='meta'><strong>Peso:</strong> " + character.mass + " kg</p>" +
                 "<p class='meta'><strong>Pelo:</strong> " + character.hair_color + "</p>" +
+                "<p class='meta'><strong>Ojos:</strong> " + eyeColor + "</p>" +
+                "<p class='meta'><strong>Año de nacimiento:</strong> " + birthYear + "</p>" +
                 "<p class='meta'><strong>Piel:</strong> " + character.skin_color + "</p>" +
                 "<p class='meta'><strong>Genero:</strong> " + character.gender + "</p>";
 

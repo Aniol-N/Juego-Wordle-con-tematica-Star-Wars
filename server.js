@@ -249,6 +249,7 @@ const server = http.createServer((req, res) => {
 					mass: firstValue(fields.mass) || null,
 					hair_color: firstValue(fields.hair_color) || null,
 					eye_color: firstValue(fields.eye_color) || null,
+					birth_year: firstValue(fields.birth_year) || null,
 					skin_color: firstValue(fields.skin_color) || null,
 					gender: firstValue(fields.gender) || null,
 					photo: {

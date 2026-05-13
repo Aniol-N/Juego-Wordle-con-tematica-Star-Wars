@@ -14,3 +14,4 @@ yarn-error.log*
 # Variables de entorno locales
 .env
 .env.*
+pr06_AJAX_enunciado.pdf

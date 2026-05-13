@@ -79,6 +79,92 @@ function normalizeColor(value) {
 	return raw;
 }
 
+function normalizeUnknownValue(value) {
+	const raw = normalizeValue(value);
+	if (!raw || raw === "n/a" || raw === "none" || raw === "unknown" || raw === "unknow") {
+		return "unknown";
+	}
+	return raw;
+}
+
+function normalizeDescriptor(value) {
+	const raw = normalizeUnknownValue(value);
+	if (raw === "unknown") {
+		return raw;
+	}
+
+	let token = raw.split(",")[0].split("/")[0].trim();
+	if (!token) {
+		return "unknown";
+	}
+
+	if (token === "blonde") {
+		token = "blond";
+	}
+
+	return token;
+}
+
+function normalizeHeight(value) {
+	const raw = normalizeUnknownValue(value);
+	if (raw === "unknown") {
+		return raw;
+	}
+
+	const digits = raw.replace(/cm$/i, "").replace(/[^0-9.]/g, "").trim();
+	if (!digits) {
+		return "unknown";
+	}
+
+	const num = Number(digits);
+	if (!Number.isFinite(num)) {
+		return "unknown";
+	}
+
+	return String(Math.round(num));
+}
+
+function normalizeMass(value) {
+	const raw = normalizeUnknownValue(value);
+	if (raw === "unknown") {
+		return raw;
+	}
+
+	const digits = raw.replace(/,/g, "").replace(/[^0-9.]/g, "").trim();
+	if (!digits) {
+		return "unknown";
+	}
+
+	const num = Number(digits);
+	if (!Number.isFinite(num)) {
+		return "unknown";
+	}
+
+	return String(num);
+}
+
+function normalizeBirthYear(value) {
+	const raw = normalizeUnknownValue(value);
+	if (raw === "unknown") {
+		return raw;
+	}
+
+	const compact = raw.replace(/\s+/g, "");
+	const match = compact.match(/^(\d+(?:\.\d+)?)(bby|aby)$/i);
+	if (!match) {
+		return compact;
+	}
+
+	const num = Number(match[1]);
+	if (!Number.isFinite(num)) {
+		return "unknown";
+	}
+
+	const normalizedNum = Number.isInteger(num) ? String(num) : String(num);
+	const era = match[2].toUpperCase();
+	return normalizedNum + era;
+}
+
 function normalizeGender(value) {
 	const raw = normalizeValue(value);
 	if (!raw || raw === "n/a") {
@@ -332,7 +418,12 @@ const server = http.createServer((req, res) => {
 
 				const secreto = {
 					name: person.name,
+					height: person.height,
+					mass: person.mass,
+					hair_color: person.hair_color,
 					eye_color: person.eye_color,
+					birth_year: person.birth_year,
+					skin_color: person.skin_color,
 					gender: person.gender,
 				};
 
@@ -430,21 +521,21 @@ const server = http.createServer((req, res) => {
 
 			// Compare height
 			if (secret.height && guessed && guessed.height) {
-				match.height = String(guessed.height).trim() === String(secret.height).trim() ? "verde" : "rojo";
+				match.height = normalizeHeight(guessed.height) === normalizeHeight(secret.height) ? "verde" : "rojo";
 			} else {
 				match.height = "desconocido";
 			}
 
 			// Compare mass
 			if (secret.mass && guessed && guessed.mass) {
-				match.mass = String(guessed.mass).trim() === String(secret.mass).trim() ? "verde" : "rojo";
+				match.mass = normalizeMass(guessed.mass) === normalizeMass(secret.mass) ? "verde" : "rojo";
 			} else {
 				match.mass = "desconocido";
 			}
 
 			// Compare hair_color
 			if (secret.hair_color && guessed && guessed.hair_color) {
-				match.hair_color = normalizeColor(guessed.hair_color) === normalizeColor(secret.hair_color) ? "verde" : "rojo";
+				match.hair_color = normalizeDescriptor(guessed.hair_color) === normalizeDescriptor(secret.hair_color) ? "verde" : "rojo";
 			} else {
 				match.hair_color = "desconocido";
 			}
@@ -458,14 +549,14 @@ const server = http.createServer((req, res) => {
 
 			// Compare birth_year
 			if (secret.birth_year && guessed && guessed.birth_year) {
-				match.birth_year = String(guessed.birth_year).trim() === String(secret.birth_year).trim() ? "verde" : "rojo";
+				match.birth_year = normalizeBirthYear(guessed.birth_year) === normalizeBirthYear(secret.birth_year) ? "verde" : "rojo";
 			} else {
 				match.birth_year = "desconocido";
 			}
 
 			// Compare skin_color
 			if (secret.skin_color && guessed && guessed.skin_color) {
-				match.skin_color = normalizeColor(guessed.skin_color) === normalizeColor(secret.skin_color) ? "verde" : "rojo";
+				match.skin_color = normalizeDescriptor(guessed.skin_color) === normalizeDescriptor(secret.skin_color) ? "verde" : "rojo";
 			} else {
 				match.skin_color = "desconocido";
 			}

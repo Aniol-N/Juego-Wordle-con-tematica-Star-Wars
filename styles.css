@@ -46,6 +46,25 @@ body {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.toolbar p {
+  margin: 0;
+}
+
+#reset-list {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+#reset-list:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .cards {

@@ -6,11 +6,16 @@
     let charactersList = document.getElementById("characters-list");
     let pagination = document.getElementById("pagination");
     let statusText = document.getElementById("status");
+    let resetListBtn = document.getElementById("reset-list");
     let currentPage = 1;
 
     function setStatus(message, isError) {
         statusText.textContent = message;
         statusText.className = isError ? "error" : "";
+    }
+
+    function getCharacterField(character, snakeCaseKey, camelCaseKey) {
+        return character[snakeCaseKey] || character[camelCaseKey] || "desconocido";
     }
 
     function transferCharacter(character, fileInput, buttonElement) {
@@ -26,7 +31,8 @@
         formData.append("height", character.height);
         formData.append("mass", character.mass);
         formData.append("hair_color", character.hair_color);
-        formData.append("eye_color", character.eye_color || "unknown");
+        formData.append("eye_color", getCharacterField(character, "eye_color", "eyeColor"));
+        formData.append("birth_year", getCharacterField(character, "birth_year", "birthYear"));
         formData.append("skin_color", character.skin_color);
         formData.append("gender", character.gender);
         formData.append("photo", selectedFile);
@@ -84,6 +90,10 @@
         };
 
         xhr.send();
+    }
+
+    function resetCharacterList() {
+        getPeople(1);
     }
 
     // --- Juego: start, autocomplete, check ---
@@ -176,6 +186,7 @@
 
     startBtn && startBtn.addEventListener("click", startGame);
     checkBtn && checkBtn.addEventListener("click", checkGuess);
+    resetListBtn && resetListBtn.addEventListener("click", resetCharacterList);
 
     function renderCharacters(characters) {
         charactersList.innerHTML = "";
@@ -183,12 +194,16 @@
         characters.forEach(function (character) {
             let card = document.createElement("article");
             card.className = "card";
+            let eyeColor = getCharacterField(character, "eye_color", "eyeColor");
+            let birthYear = getCharacterField(character, "birth_year", "birthYear");
 
             card.innerHTML =
                 "<h3>" + character.name + "</h3>" +
                 "<p class='meta'><strong>Altura:</strong> " + character.height + " cm</p>" +
                 "<p class='meta'><strong>Peso:</strong> " + character.mass + " kg</p>" +
                 "<p class='meta'><strong>Pelo:</strong> " + character.hair_color + "</p>" +
+                "<p class='meta'><strong>Ojos:</strong> " + eyeColor + "</p>" +
+                "<p class='meta'><strong>Año de nacimiento:</strong> " + birthYear + "</p>" +
                 "<p class='meta'><strong>Piel:</strong> " + character.skin_color + "</p>" +
                 "<p class='meta'><strong>Genero:</strong> " + character.gender + "</p>";
 

@@ -407,7 +407,12 @@ const server = http.createServer((req, res) => {
 					if (person) {
 						guessed = {
 							name: person.name,
+							height: person.height,
+							mass: person.mass,
+							hair_color: person.hair_color,
 							eye_color: person.eye_color,
+							birth_year: person.birth_year,
+							skin_color: person.skin_color,
 							gender: person.gender,
 						};
 					}
@@ -416,11 +421,53 @@ const server = http.createServer((req, res) => {
 				}
 			}
 
+			// Compare name
+			if (secret.name && guessed && guessed.name) {
+				match.name = normalizeValue(guessed.name) === normalizeValue(secret.name) ? "verde" : "rojo";
+			} else {
+				match.name = "desconocido";
+			}
+
+			// Compare height
+			if (secret.height && guessed && guessed.height) {
+				match.height = String(guessed.height).trim() === String(secret.height).trim() ? "verde" : "rojo";
+			} else {
+				match.height = "desconocido";
+			}
+
+			// Compare mass
+			if (secret.mass && guessed && guessed.mass) {
+				match.mass = String(guessed.mass).trim() === String(secret.mass).trim() ? "verde" : "rojo";
+			} else {
+				match.mass = "desconocido";
+			}
+
+			// Compare hair_color
+			if (secret.hair_color && guessed && guessed.hair_color) {
+				match.hair_color = normalizeColor(guessed.hair_color) === normalizeColor(secret.hair_color) ? "verde" : "rojo";
+			} else {
+				match.hair_color = "desconocido";
+			}
+
 			// Compare eye_color
 			if (secret.eye_color && guessed && guessed.eye_color) {
 				match.eye_color = normalizeColor(guessed.eye_color) === normalizeColor(secret.eye_color) ? "verde" : "rojo";
 			} else {
 				match.eye_color = "desconocido";
+			}
+
+			// Compare birth_year
+			if (secret.birth_year && guessed && guessed.birth_year) {
+				match.birth_year = String(guessed.birth_year).trim() === String(secret.birth_year).trim() ? "verde" : "rojo";
+			} else {
+				match.birth_year = "desconocido";
+			}
+
+			// Compare skin_color
+			if (secret.skin_color && guessed && guessed.skin_color) {
+				match.skin_color = normalizeColor(guessed.skin_color) === normalizeColor(secret.skin_color) ? "verde" : "rojo";
+			} else {
+				match.skin_color = "desconocido";
 			}
 
 			// Compare gender

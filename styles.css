@@ -194,6 +194,15 @@ input[type="file"] {
   gap: 0.35rem;
 }
 
+.win-notice {
+  padding: 0.55rem 0.65rem;
+  border-radius: 8px;
+  background: rgba(78, 205, 196, 0.18);
+  border: 1px solid rgba(78, 205, 196, 0.7);
+  color: #d6fffc;
+  font-weight: 700;
+}
+
 .check-verde,
 .check-rojo,
 .check-desconocido {

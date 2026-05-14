@@ -239,6 +239,14 @@
                     guessInfo.textContent = "Comparando: " + result.guessedName;
                     checkResult.appendChild(guessInfo);
                 }
+
+                if (result.match && result.match.name === "verde") {
+                    let winNotice = document.createElement("div");
+                    winNotice.className = "win-notice";
+                    winNotice.textContent = "¡Has ganado! Adivinaste el personaje secreto.";
+                    checkResult.insertBefore(winNotice, checkResult.firstChild);
+                    setStatus("Victoria: personaje acertado.", false);
+                }
             })
             .catch(() => {
                 checkResult.textContent = "Error en la comprobacion.";

@@ -240,6 +240,19 @@ const server = http.createServer((req, res) => {
 					return;
 				}
 
+				// Compatibilidad con distintas versiones de formidable:
+				// v2+ expone filepath, originalFilename, mimetype
+				// v1/v3 pueden exponer path, name, type
+				const storedFilePath = uploadedPhoto.filepath || uploadedPhoto.path || null;
+				const originalName = uploadedPhoto.originalFilename || uploadedPhoto.name || null;
+				const mimeType = uploadedPhoto.mimetype || uploadedPhoto.type || null;
+				const size = uploadedPhoto.size || 0;
+
+				if (!storedFilePath) {
+					sendJson(res, 500, { error: "Error interno: archivo subido sin ruta conocida" });
+					return;
+				}
+
 				const personas = readPersonas();
 				const registro = {
 					id: personas.length + 1,
@@ -253,10 +266,10 @@ const server = http.createServer((req, res) => {
 					skin_color: firstValue(fields.skin_color) || null,
 					gender: firstValue(fields.gender) || null,
 					photo: {
-						originalName: uploadedPhoto.originalFilename || null,
-						storedName: path.basename(uploadedPhoto.filepath),
-						mimeType: uploadedPhoto.mimetype || null,
-						size: uploadedPhoto.size || 0,
+						originalName: originalName,
+						storedName: path.basename(storedFilePath),
+						mimeType: mimeType,
+						size: size,
 					},
 				};
 
@@ -485,9 +498,39 @@ const server = http.createServer((req, res) => {
 		return;
 	}
 
+	// Reset: borrar todos los datos guardados
+	if (pathname === "/reset" && req.method === "POST") {
+		try {
+			// Limpiar personajes.json
+			writePersonas([]);
+
+			// Borrar imágenes
+			if (fs.existsSync(IMG_DIR)) {
+				const files = fs.readdirSync(IMG_DIR);
+				files.forEach((file) => {
+					const filePath = path.join(IMG_DIR, file);
+					if (fs.statSync(filePath).isFile()) {
+						fs.unlinkSync(filePath);
+					}
+				});
+			}
+
+			// Limpiar juego_secreto.json
+			juego.secreto = null;
+			if (fs.existsSync(SECRET_FILE)) {
+				fs.unlinkSync(SECRET_FILE);
+			}
+
+			sendJson(res, 200, { mensaje: "Todos los datos han sido reseteados ✓" });
+		} catch (error) {
+			sendJson(res, 500, { error: "Error al resetear datos: " + error.message });
+		}
+		return;
+	}
+
 	sendJson(res, 404, {
 		error: "Ruta no encontrada",
-		rutas: ["/persona", "/juego"],
+		rutas: ["/persona", "/juego", "/reset"],
 	});
 });
 

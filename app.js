@@ -7,6 +7,7 @@
     let pagination = document.getElementById("pagination");
     let statusText = document.getElementById("status");
     let resetListBtn = document.getElementById("reset-list");
+    let resetDataBtn = document.getElementById("reset-data");
     let currentPage = 1;
 
     function setStatus(message, isError) {
@@ -53,6 +54,7 @@
             .then(function (result) {
                 setStatus("Personaje enviado: " + character.name, false);
                 console.log("Respuesta del servidor:", result);
+                loadSavedCharacters();
             })
             .catch(function () {
                 setStatus("No se pudo enviar al servidor. Verifica que server.js este ejecutandose.", true);
@@ -65,6 +67,7 @@
 
     function getPeople(page) {
         setStatus("Cargando pagina " + page + "...", false);
+        console.log("getPeople:", page);
 
         let xhr = new XMLHttpRequest();
         xhr.open("GET", API_URL + page, true);
@@ -94,6 +97,64 @@
 
     function resetCharacterList() {
         getPeople(1);
+    }
+
+    // --- Personajes Guardados ---
+    let savedCharactersList = document.getElementById("saved-characters");
+
+    function loadSavedCharacters() {
+        if (!savedCharactersList) {
+            console.error("Error: elemento saved-characters no encontrado");
+            return;
+        }
+        
+        fetch(SERVER_URL + "/persona")
+            .then((r) => {
+                if (!r.ok) throw new Error("HTTP " + r.status);
+                return r.json();
+            })
+            .then((data) => {
+                console.log("Personajes cargados:", data);
+                if (data.items && data.items.length > 0) {
+                    renderSavedCharacters(data.items);
+                } else {
+                    savedCharactersList.innerHTML = "<p style='text-align:center;color:#999;'>No hay personajes guardados aún</p>";
+                }
+            })
+            .catch((err) => {
+                console.error("Error cargando personajes guardados:", err);
+                savedCharactersList.innerHTML = "<p style='text-align:center;color:#999;'>No se pudo cargar los personajes guardados</p>";
+            });
+    }
+
+    function renderSavedCharacters(characters) {
+        if (!savedCharactersList) return;
+        
+        savedCharactersList.innerHTML = "";
+
+        characters.forEach(function (character) {
+            let card = document.createElement("article");
+            card.className = "card saved-card";
+
+            let imageHtml = "";
+            if (character.photo && character.photo.storedName) {
+                imageHtml = "<img src='" + SERVER_URL + "/img/" + character.photo.storedName + "' alt='" + character.name + "' class='char-image'>";
+            }
+
+            card.innerHTML =
+                imageHtml +
+                "<h3>" + character.name + "</h3>" +
+                "<p class='meta'><strong>Altura:</strong> " + character.height + " cm</p>" +
+                "<p class='meta'><strong>Peso:</strong> " + character.mass + " kg</p>" +
+                "<p class='meta'><strong>Pelo:</strong> " + character.hair_color + "</p>" +
+                "<p class='meta'><strong>Ojos:</strong> " + character.eye_color + "</p>" +
+                "<p class='meta'><strong>Año de nacimiento:</strong> " + character.birth_year + "</p>" +
+                "<p class='meta'><strong>Piel:</strong> " + character.skin_color + "</p>" +
+                "<p class='meta'><strong>Genero:</strong> " + character.gender + "</p>" +
+                "<p class='meta saved-date'><strong>Guardado:</strong> " + new Date(character.recibidoEn).toLocaleString() + "</p>";
+
+            savedCharactersList.appendChild(card);
+        });
     }
 
     // --- Juego: start, autocomplete, check ---
@@ -187,6 +248,23 @@
     startBtn && startBtn.addEventListener("click", startGame);
     checkBtn && checkBtn.addEventListener("click", checkGuess);
     resetListBtn && resetListBtn.addEventListener("click", resetCharacterList);
+    resetDataBtn && resetDataBtn.addEventListener("click", function () {
+        if (confirm("¿Estás seguro? Esto borrará todos los personajes guardados e imágenes.")) {
+            fetch(SERVER_URL + "/reset", { method: "POST" })
+                .then((r) => r.json())
+                .then((data) => {
+                    console.log("Reset response:", data);
+                    setStatus(data.mensaje || "Datos reseteados", false);
+                    setTimeout(function() {
+                        loadSavedCharacters();
+                    }, 300);
+                })
+                .catch((err) => {
+                    console.error("Reset error:", err);
+                    setStatus("Error al resetear datos", true);
+                });
+        }
+    });
 
     function renderCharacters(characters) {
         charactersList.innerHTML = "";
@@ -272,4 +350,6 @@
     }
 
     getPeople(1);
+    console.log("Cargando personajes guardados...");
+    loadSavedCharacters();
 })();

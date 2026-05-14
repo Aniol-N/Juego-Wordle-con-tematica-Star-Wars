@@ -163,6 +163,65 @@
     let suggestionsEl = document.getElementById("suggestions");
     let checkBtn = document.getElementById("check-btn");
     let checkResult = document.getElementById("check-result");
+    let attemptsCountEl = document.getElementById("attempts-count");
+    let attemptHistoryEl = document.getElementById("attempt-history");
+    let attempts = 0;
+    let history = [];
+
+    function updateAttemptsCounter() {
+        if (attemptsCountEl) {
+            attemptsCountEl.textContent = String(attempts);
+        }
+    }
+
+    function renderAttemptHistory() {
+        if (!attemptHistoryEl) {
+            return;
+        }
+
+        attemptHistoryEl.innerHTML = "";
+
+        if (history.length === 0) {
+            let emptyItem = document.createElement("li");
+            emptyItem.className = "attempt-item attempt-empty";
+            emptyItem.textContent = "Sin intentos aun.";
+            attemptHistoryEl.appendChild(emptyItem);
+            return;
+        }
+
+        history.forEach(function (entry, index) {
+            let item = document.createElement("li");
+            item.className = "attempt-item" + (entry.isWin ? " attempt-win" : "");
+
+            let name = document.createElement("span");
+            name.className = "attempt-name";
+            name.textContent = (index + 1) + ". " + entry.guessedName;
+
+            let score = document.createElement("span");
+            score.className = "attempt-score";
+            score.textContent = "Verdes: " + entry.greens + " | Rojos: " + entry.reds + " | Desconocidos: " + entry.unknowns;
+
+            item.appendChild(name);
+            item.appendChild(score);
+            attemptHistoryEl.appendChild(item);
+        });
+    }
+
+    function getMatchStats(match) {
+        let stats = { greens: 0, reds: 0, unknowns: 0 };
+
+        Object.keys(match || {}).forEach(function (key) {
+            if (match[key] === "verde") {
+                stats.greens += 1;
+            } else if (match[key] === "rojo") {
+                stats.reds += 1;
+            } else {
+                stats.unknowns += 1;
+            }
+        });
+
+        return stats;
+    }
 
     function startGame() {
         setStatus("Iniciando juego...", false);
@@ -173,6 +232,15 @@
                     setStatus(j.error, true);
                     return;
                 }
+                attempts = 0;
+                history = [];
+                updateAttemptsCounter();
+                renderAttemptHistory();
+                checkResult.innerHTML = "";
+                guessInput.value = "";
+                suggestionsEl.innerHTML = "";
+                checkBtn.disabled = false;
+                guessInput.disabled = false;
                 setStatus("Juego iniciado (fuente: " + (j.fuente || "local") + ").", false);
             })
             .catch(() => setStatus("No se pudo iniciar el juego.", true));
@@ -233,6 +301,20 @@
                     checkResult.appendChild(el);
                 });
 
+                attempts += 1;
+                updateAttemptsCounter();
+
+                let stats = getMatchStats(result.match);
+                let isWin = result.match && result.match.name === "verde";
+                history.unshift({
+                    guessedName: result.guessedName || name,
+                    greens: stats.greens,
+                    reds: stats.reds,
+                    unknowns: stats.unknowns,
+                    isWin: isWin,
+                });
+                renderAttemptHistory();
+
                 if (result.guessedName) {
                     let guessInfo = document.createElement("div");
                     guessInfo.className = "meta";
@@ -240,18 +322,23 @@
                     checkResult.appendChild(guessInfo);
                 }
 
-                if (result.match && result.match.name === "verde") {
+                if (isWin) {
                     let winNotice = document.createElement("div");
                     winNotice.className = "win-notice";
-                    winNotice.textContent = "¡Has ganado! Adivinaste el personaje secreto.";
+                    winNotice.textContent = "¡Has ganado! Lo adivinaste en " + attempts + " intento" + (attempts === 1 ? "" : "s") + ".";
                     checkResult.insertBefore(winNotice, checkResult.firstChild);
-                    setStatus("Victoria: personaje acertado.", false);
+                    setStatus("Victoria en " + attempts + " intento" + (attempts === 1 ? "" : "s") + ".", false);
+                    checkBtn.disabled = true;
+                    guessInput.disabled = true;
                 }
             })
             .catch(() => {
                 checkResult.textContent = "Error en la comprobacion.";
             });
     }
+
+    updateAttemptsCounter();
+    renderAttemptHistory();
 
     startBtn && startBtn.addEventListener("click", startGame);
     checkBtn && checkBtn.addEventListener("click", checkGuess);
